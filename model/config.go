@@ -32,6 +32,7 @@ const (
 	PASSWORD_MINIMUM_LENGTH = 5
 
 	SERVICE_GITLAB    = "gitlab"
+	SERVICE_TOWN = "town"
 	SERVICE_GOOGLE    = "google"
 	SERVICE_OFFICE365 = "office365"
 
@@ -1634,6 +1635,7 @@ type Config struct {
 	AnnouncementSettings  AnnouncementSettings
 	ThemeSettings         ThemeSettings
 	GitLabSettings        SSOSettings
+	TownSettings          SSOSettings
 	GoogleSettings        SSOSettings
 	Office365Settings     SSOSettings
 	LdapSettings          LdapSettings
@@ -1673,6 +1675,8 @@ func (o *Config) GetSSOService(service string) *SSOSettings {
 	switch service {
 	case SERVICE_GITLAB:
 		return &o.GitLabSettings
+	case SERVICE_TOWN:
+		return &o.TownSettings
 	case SERVICE_GOOGLE:
 		return &o.GoogleSettings
 	case SERVICE_OFFICE365:

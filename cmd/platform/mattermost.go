@@ -12,6 +12,7 @@ import (
 
 	// Plugins
 	_ "github.com/mattermost/mattermost-server/model/gitlab"
+	_ "github.com/mattermost/mattermost-server/model/town"
 
 	// Enterprise Imports
 	_ "github.com/mattermost/mattermost-server/imports"

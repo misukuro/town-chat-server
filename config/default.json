@@ -213,6 +213,15 @@
         "TokenEndpoint": "",
         "UserApiEndpoint": ""
     },
+    "TownSettings": {
+        "Enable": true,
+        "Secret": "",
+        "Id": "",
+        "Scope": "",
+        "AuthEndpoint": "",
+        "TokenEndpoint": "",
+        "UserApiEndpoint": ""
+    },
     "GoogleSettings": {
         "Enable": false,
         "Secret": "",

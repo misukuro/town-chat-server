@@ -412,6 +412,7 @@ func GenerateClientConfig(c *model.Config, diagnosticId string) map[string]strin
 	props["EmailLoginButtonTextColor"] = *c.EmailSettings.LoginButtonTextColor
 
 	props["EnableSignUpWithGitLab"] = strconv.FormatBool(c.GitLabSettings.Enable)
+  props["EnableSignUpWithTown"] = strconv.FormatBool(c.TownSettings.Enable)
 
 	props["ShowEmailAddress"] = strconv.FormatBool(c.PrivacySettings.ShowEmailAddress)
 

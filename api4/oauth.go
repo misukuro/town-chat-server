@@ -377,6 +377,80 @@ func authorizeOAuthPage(c *Context, w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, staticDir+"root.html")
 }
 
+func completeTownLogin(c *Context, w http.ResponseWriter, r *http.Request) {
+	c.RequireService()
+	if c.Err != nil {
+		return
+	}
+
+	service := c.Params.Service
+
+	code := r.URL.Query().Get("code")
+
+	state := r.URL.Query().Get("state")
+
+	uri := c.GetSiteURLHeader() + "/signup/" + service + "/complete"
+
+	body, teamId, props, err := c.App.AuthorizeOAuthUser(w, r, service, code, state, uri)
+
+	action := ""
+	if props != nil {
+		action = props["action"]
+	}
+
+	if err != nil {
+		err.Translate(c.T)
+		l4g.Error(err.Error())
+		if action == model.OAUTH_ACTION_MOBILE {
+			w.Write([]byte(err.ToJson()))
+		} else {
+			http.Redirect(w, r, c.GetSiteURLHeader()+"/error?message="+url.QueryEscape(err.Message), http.StatusTemporaryRedirect)
+		}
+		return
+	}
+
+	user, err := c.App.CompleteOAuth(service, body, teamId, props)
+	if err != nil {
+		err.Translate(c.T)
+		l4g.Error(err.Error())
+		if action == model.OAUTH_ACTION_MOBILE {
+			w.Write([]byte(err.ToJson()))
+		} else {
+			http.Redirect(w, r, c.GetSiteURLHeader()+"/error?message="+url.QueryEscape(err.Message), http.StatusTemporaryRedirect)
+		}
+		return
+	}
+
+	var redirectUrl string
+	if action == model.OAUTH_ACTION_EMAIL_TO_SSO {
+		redirectUrl = c.GetSiteURLHeader() + "/login?extra=signin_change"
+	} else if action == model.OAUTH_ACTION_SSO_TO_EMAIL {
+
+		redirectUrl = app.GetProtocol(r) + "://" + r.Host + "/claim?email=" + url.QueryEscape(props["email"])
+	} else {
+		session, err := c.App.DoLogin(w, r, user, "")
+		if err != nil {
+			err.Translate(c.T)
+			c.Err = err
+			if action == model.OAUTH_ACTION_MOBILE {
+				w.Write([]byte(err.ToJson()))
+			}
+			return
+		}
+
+		c.Session = *session
+
+		redirectUrl = c.GetSiteURLHeader()
+	}
+
+	if action == model.OAUTH_ACTION_MOBILE {
+		ReturnStatusOK(w)
+		return
+	} else {
+		http.Redirect(w, r, redirectUrl, http.StatusTemporaryRedirect)
+	}
+}
+
 func getAccessToken(c *Context, w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 

@@ -429,7 +429,7 @@ func migrateAuthCmdF(cmd *cobra.Command, args []string) error {
 	toAuth := args[1]
 	matchField := args[2]
 
-	if len(fromAuth) == 0 || (fromAuth != "email" && fromAuth != "gitlab" && fromAuth != "saml") {
+	if len(fromAuth) == 0 || (fromAuth != "email" && fromAuth != "gitlab" && fromAuth != "saml" && fromAuth != "town") {
 		return errors.New("Invalid from_auth argument")
 	}
 

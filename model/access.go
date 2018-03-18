@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	l4g "github.com/alecthomas/log4go"
 )
 
 const (
@@ -109,6 +111,7 @@ func AccessResponseFromJson(data io.Reader) *AccessResponse {
 	if err == nil {
 		return &ar
 	} else {
+    l4g.Error("GetOpenGraphMetadata request failed for url=with err=%v", err.Error())
 		return nil
 	}
 }
